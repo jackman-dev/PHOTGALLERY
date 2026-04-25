@@ -14,7 +14,8 @@ function escapeHtml(value) {
 }
 
 async function loadPhotos() {
-  const response = await fetch("/api/photos");
+  const response = await fetch("./photos.json", { cache: "no-store" });
+  if (!response.ok) return [];
   return response.json();
 }
 
@@ -57,4 +58,6 @@ dialog.addEventListener("click", (event) => {
   }
 });
 
-renderPublicGallery();
+renderPublicGallery().catch(() => {
+  emptyState.classList.remove("is-hidden");
+});

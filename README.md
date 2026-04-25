@@ -1,24 +1,29 @@
 # Photographer Gallery
 
-관리자가 사진을 등록하면 방문자는 포토그래퍼 포트폴리오 형태의 갤러리로 사진만 볼 수 있는 간단한 웹사이트입니다.
+GitHub Pages에서 볼 수 있는 포토그래퍼 포트폴리오 갤러리입니다.
 
 ## 실행
 
-```bash
-node server.js
+브라우저에서 `index.html`을 열거나 GitHub Pages 주소로 접속합니다.
+
+```text
+https://jackman-dev.github.io/PHOTGALLERY/
 ```
 
-브라우저에서 아래 주소로 접속합니다.
+## 사진 추가
 
-- 방문자 화면: http://localhost:5173
-- 관리자 화면: http://localhost:5173/admin.html
+1. `photos/` 폴더에 사진 파일을 추가합니다.
+2. `photos.json`에 사진 정보를 추가합니다.
 
-## 저장 방식
-
-- 업로드한 사진 파일은 `uploads/` 폴더에 저장됩니다.
-- 사진 목록은 `data/photos.json` 파일에 저장됩니다.
-- `data/`와 `uploads/`는 운영 데이터라 git에는 올리지 않습니다.
+```json
+[
+  {
+    "title": "Wedding Snapshot",
+    "url": "./photos/wedding-01.jpg"
+  }
+]
+```
 
 ## 참고
 
-외부 사용자가 접속하는 운영 사이트로 배포할 때는 관리자 로그인, 이미지 용량 제한, 백업 정책을 추가하는 것이 좋습니다.
+GitHub Pages는 서버 코드를 실행하지 않기 때문에 웹 관리자 업로드 기능은 사용할 수 없습니다. 관리자 화면에서 직접 사진을 업로드하려면 Render, Railway 같은 서버 배포 방식이 필요합니다.

@@ -202,6 +202,10 @@ button {
   box-shadow: var(--shadow);
 }
 
+.guide-workspace {
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+}
+
 .uploader {
   display: flex;
   flex-direction: column;
@@ -433,6 +437,48 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: white;
+}
+
+.guide-content {
+  display: grid;
+  gap: 18px;
+  max-width: 760px;
+  padding-top: 24px;
+}
+
+.guide-content section {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.guide-content h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.guide-content p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.guide-content pre {
+  overflow: auto;
+  margin: 14px 0 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: #151922;
+  color: #eef2f7;
+}
+
+.public-url {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--accent-dark);
+  font-weight: 800;
+  word-break: break-all;
 }
 
 .photo-card img {
