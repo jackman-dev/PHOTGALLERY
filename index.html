@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photographer Portfolio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="public-page">
+    <header class="site-header">
+      <a class="site-logo" href="./index.html" aria-label="홈">STUDIO PHOTO</a>
+      <nav aria-label="사이트 메뉴">
+        <a href="#gallery">Gallery</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Photographer Portfolio</p>
+          <h1>순간의 온도를 사진으로 남깁니다.</h1>
+          <p>
+            웨딩, 인물, 여행, 브랜드 촬영까지. 빛과 표정이 머문 장면을
+            차분한 갤러리로 소개합니다.
+          </p>
+        </div>
+      </section>
+
+      <section id="gallery" class="public-gallery-section" aria-label="사진 갤러리">
+        <div class="section-heading">
+          <p class="eyebrow">Selected Works</p>
+          <h2>Gallery</h2>
+        </div>
+
+        <div id="empty-state" class="public-empty">
+          <h3>준비 중인 갤러리입니다.</h3>
+          <p>새로운 작업물이 곧 소개됩니다.</p>
+        </div>
+
+        <div id="public-gallery" class="masonry-gallery" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <dialog id="photo-dialog" class="photo-dialog public-dialog">
+      <button id="close-dialog" class="close-button" type="button" aria-label="닫기">×</button>
+      <img id="dialog-image" alt="" />
+    </dialog>
+
+    <script src="./gallery.js"></script>
+  </body>
+</html>
