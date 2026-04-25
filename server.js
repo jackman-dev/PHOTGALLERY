@@ -3,11 +3,10 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const PORT = 5173;
+const PORT = process.env.PORT || 5173;
 const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, "data");
-const UPLOAD_DIR = path.join(ROOT, "uploads");
-const DB_FILE = path.join(DATA_DIR, "photos.json");
+const UPLOAD_DIR = path.join(ROOT, "photos");
+const DB_FILE = path.join(ROOT, "photos.json");
 
 const MIME_TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -22,7 +21,6 @@ const MIME_TYPES = {
   ".avif": "image/avif",
 };
 
-fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, "[]");
@@ -133,7 +131,7 @@ async function handlePhotoUpload(req, res) {
       title: title || path.basename(file.filename, path.extname(file.filename)) || `사진 ${index + 1}`,
       note: note || "",
       createdAt,
-      url: `/uploads/${storedName}`,
+      url: `./photos/${storedName}`,
     };
   });
 
@@ -150,7 +148,7 @@ function deletePhoto(req, res, id) {
     return;
   }
 
-  const filePath = path.join(ROOT, target.url);
+  const filePath = path.join(ROOT, target.url.replace(/^\.\//, ""));
   if (filePath.startsWith(UPLOAD_DIR) && fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
   }

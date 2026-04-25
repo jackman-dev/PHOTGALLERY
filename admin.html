@@ -3,59 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Photo Admin Guide</title>
+    <title>Photo Admin</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
-      <section class="workspace guide-workspace" aria-label="GitHub Pages 갤러리 관리 안내">
-        <aside class="uploader" aria-label="관리 안내">
+      <section class="workspace" aria-label="사진 등록 작업공간">
+        <aside class="uploader" aria-label="사진 등록">
           <div class="brand">
             <span class="brand-mark" aria-hidden="true">P</span>
             <div>
-              <h1>Photo Guide</h1>
-              <p>GitHub Pages 방식의 사진 등록 안내입니다.</p>
+              <h1>Photo Admin</h1>
+              <p>로컬에서 사진을 등록한 뒤 git push로 공개하세요.</p>
             </div>
           </div>
 
-          <a class="view-site-link" href="./index.html">방문자 화면 보기</a>
+          <form id="photo-form" class="photo-form">
+            <label class="drop-zone" for="photo-input">
+              <input id="photo-input" type="file" accept="image/*" multiple />
+              <span class="drop-icon" aria-hidden="true">+</span>
+              <strong>사진 선택</strong>
+              <small>사진은 photos 폴더에 저장됩니다.</small>
+            </label>
+
+            <label class="field">
+              <span>제목</span>
+              <input id="photo-title" type="text" placeholder="예: 제주 스냅" maxlength="40" />
+            </label>
+
+            <label class="field">
+              <span>카테고리</span>
+              <input id="photo-note" type="text" placeholder="예: Wedding / Portrait / Travel" maxlength="80" />
+            </label>
+
+            <button class="primary-button" type="submit">갤러리에 등록</button>
+            <a class="view-site-link" href="./index.html">방문자 화면 보기</a>
+          </form>
         </aside>
 
-        <section class="gallery-panel">
+        <section class="gallery-panel" aria-label="등록된 사진 관리">
           <header class="gallery-toolbar">
             <div>
-              <h2>사진 추가 방법</h2>
-              <p>서버 없이 GitHub Pages에서 운영하는 방식입니다.</p>
+              <h2>등록 사진</h2>
+              <p id="photo-count">등록된 사진 0장</p>
+            </div>
+            <div class="toolbar-actions">
+              <label class="search">
+                <span aria-hidden="true">⌕</span>
+                <input id="search-input" type="search" placeholder="검색" />
+              </label>
+              <button id="clear-button" class="ghost-button" type="button">전체 삭제</button>
             </div>
           </header>
 
-          <div class="guide-content">
-            <section>
-              <h3>1. 사진 파일 올리기</h3>
-              <p>GitHub 저장소의 <strong>photos</strong> 폴더에 사진 파일을 업로드합니다.</p>
-            </section>
-
-            <section>
-              <h3>2. photos.json 수정하기</h3>
-              <p>새 사진 정보를 <strong>photos.json</strong> 파일에 추가합니다.</p>
-              <pre><code>[
-  {
-    "title": "Wedding Snapshot",
-    "url": "./photos/wedding-01.jpg"
-  }
-]</code></pre>
-            </section>
-
-            <section>
-              <h3>3. 사이트 확인하기</h3>
-              <p>변경 후 아래 주소에서 갤러리를 확인합니다.</p>
-              <a class="public-url" href="https://jackman-dev.github.io/PHOTGALLERY/">
-                https://jackman-dev.github.io/PHOTGALLERY/
-              </a>
-            </section>
+          <div id="empty-state" class="empty-state">
+            <h3>아직 등록된 사진이 없습니다.</h3>
+            <p>왼쪽에서 사진을 선택하면 photos.json에 반영됩니다.</p>
           </div>
+
+          <div id="gallery-grid" class="gallery-grid" aria-live="polite"></div>
         </section>
       </section>
     </main>
+
+    <dialog id="photo-dialog" class="photo-dialog">
+      <button id="close-dialog" class="close-button" type="button" aria-label="닫기">×</button>
+      <img id="dialog-image" alt="" />
+      <div class="dialog-copy">
+        <h3 id="dialog-title"></h3>
+        <p id="dialog-note"></p>
+      </div>
+    </dialog>
+
+    <script src="./admin.js"></script>
   </body>
 </html>
