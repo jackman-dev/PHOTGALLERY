@@ -51,8 +51,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 260px;
-  padding: 72px clamp(28px, 3.4vw, 70px) 42px;
+  padding: 50px clamp(30px, 2.4vw, 68px) 30px;
   background: #ffffff;
 }
 
@@ -93,7 +92,7 @@ button {
 }
 
 .public-gallery-section {
-  padding: 96px clamp(28px, 3.4vw, 70px) 130px;
+  padding: 51px clamp(28px, 3.4vw, 70px) 50px;
 }
 
 .section-heading {
@@ -510,10 +509,9 @@ button {
 }
 
 .photo-dialog {
-  width: min(920px, calc(100vw - 32px));
+  width: min(1200px, calc(100vw - 32px));
   padding: 0;
   border: 0;
-  border-radius: 8px;
   background: white;
   box-shadow: var(--shadow);
 }
@@ -546,8 +544,8 @@ button {
   height: 38px;
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #11161d;
+  background: rgba(255, 255, 255, 0);
+  color: #ffffff;
   font-size: 26px;
   line-height: 1;
 }
