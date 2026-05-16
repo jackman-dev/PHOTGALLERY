@@ -43,6 +43,29 @@ function writePhotos(photos) {
   fs.writeFileSync(DB_FILE, JSON.stringify(photos, null, 2));
 }
 
+function reorderPhotos(req, res, body) {
+  let ids = [];
+  try {
+    ids = JSON.parse(body.toString("utf8")).ids;
+  } catch {
+    sendJson(res, 400, { error: "잘못된 정렬 요청입니다." });
+    return;
+  }
+
+  if (!Array.isArray(ids)) {
+    sendJson(res, 400, { error: "ids 배열이 필요합니다." });
+    return;
+  }
+
+  const photos = readPhotos();
+  const photoMap = new Map(photos.map((photo) => [photo.id, photo]));
+  const orderedPhotos = ids.map((id) => photoMap.get(id)).filter(Boolean);
+  const remainingPhotos = photos.filter((photo) => !ids.includes(photo.id));
+
+  writePhotos([...orderedPhotos, ...remainingPhotos]);
+  sendJson(res, 200, { ok: true });
+}
+
 function collectBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -203,6 +226,11 @@ const server = http.createServer(async (req, res) => {
 
     if (req.method === "POST" && url.pathname === "/api/photos") {
       await handlePhotoUpload(req, res);
+      return;
+    }
+
+    if (req.method === "PUT" && url.pathname === "/api/photos/order") {
+      reorderPhotos(req, res, await collectBody(req));
       return;
     }
 

@@ -1,5 +1,6 @@
 const form = document.querySelector("#photo-form");
 const input = document.querySelector("#photo-input");
+const dropZone = document.querySelector(".drop-zone");
 const titleInput = document.querySelector("#photo-title");
 const noteInput = document.querySelector("#photo-note");
 const searchInput = document.querySelector("#search-input");
@@ -14,6 +15,7 @@ const dialogNote = document.querySelector("#dialog-note");
 const closeDialog = document.querySelector("#close-dialog");
 
 let photos = [];
+let draggedPhotoId = null;
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("ko-KR", {
@@ -30,6 +32,10 @@ function getFilteredPhotos() {
   return photos.filter((photo) => {
     return `${photo.title} ${photo.note}`.toLowerCase().includes(keyword);
   });
+}
+
+function hasSearchKeyword() {
+  return searchInput.value.trim().length > 0;
 }
 
 async function loadPhotos() {
@@ -57,6 +63,8 @@ function renderGallery() {
   visiblePhotos.forEach((photo) => {
     const card = document.createElement("article");
     card.className = "photo-card";
+    card.draggable = !hasSearchKeyword();
+    card.dataset.id = photo.id;
     card.innerHTML = `
       <img src="${photo.url}" alt="${escapeHtml(photo.title)}" />
       <div class="photo-card-body">
@@ -64,6 +72,7 @@ function renderGallery() {
           <h3>${escapeHtml(photo.title)}</h3>
           <p>${escapeHtml(photo.note || formatDate(photo.createdAt))}</p>
         </div>
+        <span class="drag-hint">드래그로 순서 이동</span>
         <div class="card-actions">
           <button type="button" data-action="view" data-id="${photo.id}">보기</button>
           <button class="delete" type="button" data-action="delete" data-id="${photo.id}">삭제</button>
@@ -71,6 +80,14 @@ function renderGallery() {
       </div>
     `;
     grid.append(card);
+  });
+}
+
+async function savePhotoOrder() {
+  await fetch("/api/photos/order", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids: photos.map((photo) => photo.id) }),
   });
 }
 
@@ -112,6 +129,35 @@ form.addEventListener("submit", async (event) => {
   await loadPhotos();
 });
 
+dropZone.addEventListener("dragenter", (event) => {
+  event.preventDefault();
+  dropZone.classList.add("is-dragover");
+});
+
+dropZone.addEventListener("dragover", (event) => {
+  event.preventDefault();
+  dropZone.classList.add("is-dragover");
+});
+
+dropZone.addEventListener("dragleave", (event) => {
+  if (!dropZone.contains(event.relatedTarget)) {
+    dropZone.classList.remove("is-dragover");
+  }
+});
+
+dropZone.addEventListener("drop", (event) => {
+  event.preventDefault();
+  dropZone.classList.remove("is-dragover");
+
+  const files = Array.from(event.dataTransfer.files).filter((file) => file.type.startsWith("image/"));
+  if (files.length === 0) return;
+
+  const transfer = new DataTransfer();
+  files.forEach((file) => transfer.items.add(file));
+  input.files = transfer.files;
+  form.requestSubmit();
+});
+
 grid.addEventListener("click", async (event) => {
   const button = event.target.closest("button");
   if (!button) return;
@@ -126,6 +172,47 @@ grid.addEventListener("click", async (event) => {
   }
 
   openPhoto(photo);
+});
+
+grid.addEventListener("dragstart", (event) => {
+  const card = event.target.closest(".photo-card");
+  if (!card || hasSearchKeyword()) return;
+
+  draggedPhotoId = card.dataset.id;
+  card.classList.add("is-dragging");
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", draggedPhotoId);
+});
+
+grid.addEventListener("dragend", (event) => {
+  event.target.closest(".photo-card")?.classList.remove("is-dragging");
+  draggedPhotoId = null;
+});
+
+grid.addEventListener("dragover", (event) => {
+  if (!draggedPhotoId || hasSearchKeyword()) return;
+  event.preventDefault();
+
+  const targetCard = event.target.closest(".photo-card");
+  if (!targetCard || targetCard.dataset.id === draggedPhotoId) return;
+
+  const draggingCard = grid.querySelector(`[data-id="${draggedPhotoId}"]`);
+  if (!draggingCard) return;
+
+  const targetBox = targetCard.getBoundingClientRect();
+  const shouldPlaceAfter = event.clientY > targetBox.top + targetBox.height / 2;
+  targetCard.insertAdjacentElement(shouldPlaceAfter ? "afterend" : "beforebegin", draggingCard);
+});
+
+grid.addEventListener("drop", async (event) => {
+  if (!draggedPhotoId || hasSearchKeyword()) return;
+  event.preventDefault();
+
+  const orderedIds = Array.from(grid.querySelectorAll(".photo-card")).map((card) => card.dataset.id);
+  const photoMap = new Map(photos.map((photo) => [photo.id, photo]));
+  photos = orderedIds.map((id) => photoMap.get(id)).filter(Boolean);
+  await savePhotoOrder();
+  renderGallery();
 });
 
 searchInput.addEventListener("input", renderGallery);

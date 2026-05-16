@@ -8,7 +8,7 @@
   </head>
   <body class="public-page">
     <header class="site-header">
-      <a class="site-logo" href="./index.html" aria-label="홈">JaCKmaN Photo</a>
+      <a class="site-logo" href="./index.html" aria-label="홈">JACKMAN</a>
       <nav aria-label="사이트 메뉴">
         <a href="#gallery">Work</a>
         <a href="#gallery">Portraits</a>
@@ -30,7 +30,15 @@
 
     <dialog id="photo-dialog" class="photo-dialog public-dialog">
       <button id="close-dialog" class="close-button" type="button" aria-label="닫기">×</button>
-      <img id="dialog-image" alt="" />
+      <div class="lightbox-actions" aria-label="사진 이동">
+        <button id="prev-photo" class="lightbox-nav" type="button" aria-label="이전 사진">←</button>
+        <button id="next-photo" class="lightbox-nav" type="button" aria-label="다음 사진">→</button>
+      </div>
+      <figure class="lightbox-frame">
+        <img id="dialog-image" alt="" />
+      </figure>
+      <div class="lightbox-brand" aria-hidden="true">JACKMAN</div>
+      <div id="photo-counter" class="photo-counter" aria-live="polite">0 / 0</div>
     </dialog>
 
     <script src="./gallery.js"></script>

@@ -3,6 +3,12 @@ const emptyState = document.querySelector("#empty-state");
 const dialog = document.querySelector("#photo-dialog");
 const dialogImage = document.querySelector("#dialog-image");
 const closeDialog = document.querySelector("#close-dialog");
+const prevPhoto = document.querySelector("#prev-photo");
+const nextPhoto = document.querySelector("#next-photo");
+const photoCounter = document.querySelector("#photo-counter");
+
+let photos = [];
+let currentIndex = 0;
 
 function escapeHtml(value) {
   return String(value)
@@ -20,7 +26,7 @@ async function loadPhotos() {
 }
 
 async function renderPublicGallery() {
-  const photos = await loadPhotos();
+  photos = await loadPhotos();
 
   emptyState.classList.toggle("is-hidden", photos.length > 0);
   gallery.innerHTML = "";
@@ -35,26 +41,53 @@ async function renderPublicGallery() {
   });
 }
 
-gallery.addEventListener("click", async (event) => {
-  const item = event.target.closest(".masonry-item");
-  if (!item) return;
-
-  const photos = await loadPhotos();
-  const photo = photos[Number(item.dataset.index)];
+function updateLightbox() {
+  const photo = photos[currentIndex];
   if (!photo) return;
 
   dialogImage.src = photo.url;
   dialogImage.alt = photo.title;
+  photoCounter.textContent = `${currentIndex + 1} / ${photos.length}`;
+  prevPhoto.disabled = photos.length <= 1;
+  nextPhoto.disabled = photos.length <= 1;
+}
+
+function showPhoto(index) {
+  if (photos.length === 0) return;
+
+  currentIndex = (index + photos.length) % photos.length;
+  updateLightbox();
+}
+
+gallery.addEventListener("click", (event) => {
+  const item = event.target.closest(".masonry-item");
+  if (!item) return;
+
+  showPhoto(Number(item.dataset.index));
   dialog.showModal();
+});
+
+prevPhoto.addEventListener("click", () => {
+  showPhoto(currentIndex - 1);
+});
+
+nextPhoto.addEventListener("click", () => {
+  showPhoto(currentIndex + 1);
 });
 
 closeDialog.addEventListener("click", () => {
   dialog.close();
 });
 
-dialog.addEventListener("click", (event) => {
-  if (event.target === dialog) {
-    dialog.close();
+document.addEventListener("keydown", (event) => {
+  if (!dialog.open) return;
+
+  if (event.key === "ArrowLeft") {
+    showPhoto(currentIndex - 1);
+  }
+
+  if (event.key === "ArrowRight") {
+    showPhoto(currentIndex + 1);
   }
 });
 
